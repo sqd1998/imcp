@@ -1,0 +1,71 @@
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+
+
+
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <legend>新建订单</legend>
+        </fieldset>
+
+        <form class="layui-form" action="">
+            <div class="layui-form-item">
+                <label class="layui-form-label">订单编号</label>
+                <div class="layui-input-block">
+                    <input type="text" name="order_seq" lay-verify="title" autocomplete="off" placeholder="请输入订单编号" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">订单来源</label>
+                <div class="layui-input-block">
+                    <input type="text" name="order_source" lay-verify="product_id" lay-reqtext="title" placeholder="请输入订单来源" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">产品ID</label>
+                    <div class="layui-input-inline">
+                        <input type="tel" name="product_id" lay-verify="product_id|order_source" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">产品数量</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="product_count" lay-verify="product_count" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">订单截止日期</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="end_date" lay-verify="product_id|end_date" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">订单状态 10：未接单  20：已接单  30：已拒绝</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="order_status" id="order_status" lay-verify="order_status" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+
+            <!--<div class="layui-form-item layui-form-text">
+              <label class="layui-form-label">编辑器</label>
+              <div class="layui-input-block">
+                <textarea class="layui-textarea layui-hide" name="content" lay-verify="content" id="LAY_demo_editor"></textarea>
+              </div>
+            </div>-->
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+
+
+
+</script>

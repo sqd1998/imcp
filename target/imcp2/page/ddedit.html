@@ -1,0 +1,178 @@
+<div class="layuimini-main">
+
+    <div class="layui-form layuimini-form">
+        <form class="layui-form" id="addPro" action="addPro.action" method="post">
+        <div class="layui-form-item">
+            <label class="layui-form-label required">有效标识</label>
+            <div class="layui-input-block">
+<!--                lay-verify="required" lay-reqtext="有效标识不能为空"-->
+<!--                <input type="number" name="flag"  placeholder="请输入有效标识" value="" class="layui-input">-->
+                <select id="ddbs" name="ddbs" lay-filter="ddbs" lay-verify="required">
+                    <option value="1" selected>有效</option>
+                    <option value="2">无效</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">创建人ID</label>
+            <div class="layui-input-block">
+<!--                <input type="text" name="create_userid" placeholder="请输入创建人ID" value="" class="layui-input">-->
+                <select id="ddr" name="ddr" lay-filter="ddr" lay-verify="required">
+                    <option value="">请选择</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">订单来源</label>
+            <div class="layui-input-block">
+<!--                <input type="text" name="product_num" placeholder="请输入产品编号" value="" class="layui-input">-->
+                <select id="ddly" name="ddly" lay-filter="ddly" lay-verify="required">
+                    <option value="1" selected>线下</option>
+                    <option value="2">线上</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">产品</label>
+            <div class="layui-input-block">
+<!--                <input type="text" name="product_name" placeholder="请输入产品名称" value="" class="layui-input">-->
+                <select id="ddcp" name="ddcp" lay-filter="ddcp" lay-verify="required">
+                    <option value="">请选择</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">产品数量</label>
+            <div class="layui-input-block">
+                <input type="hidden" id="id" name="id">
+                <input type="text" name="product_count" placeholder="请输入产品数量" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">订单截止日期</label>
+            <div class="layui-input-block">
+                <input type="text" id="end_date" autocomplete="off" name="end_date" placeholder="请输入订单截止日期" value="" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="saveBtn" style="margin-left: 400px">确认保存</button>
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+<script>
+    layui.use(['form', 'table','laydate'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            laydate = layui.laydate,
+            table = layui.table,
+            $ = layui.$,
+            cp,
+            ly,
+            bs,
+            r;
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#end_date', //指定元素
+            type:'date'
+        });
+        //动态加载产品下拉列表
+        form.on('select(ddcp)',function (data) {
+            $.ajax({
+                url: 'selAllPro.action',
+                dataType: 'json',
+                type: 'post',
+                success: function (data) {
+                    $.each(data.data, function (index, item) {
+                        $('#ddcp').append(new Option(item.product_name, item.id));// 下拉菜单里添加元素
+                    });
+                    form.render("select");
+                }
+            })
+            cp=data.value;
+        })
+        //动态加载创建人下拉列表
+        form.on('select(ddr)',function (data) {
+            $.ajax({
+                url: 'selUser.action',
+                dataType: 'json',
+                type: 'post',
+                success: function (data) {
+                    $.each(data.data, function (index, item) {
+                        $('#ddr').append(new Option(item.user_name, item.id));// 下拉菜单里添加元素
+                    });
+                    form.render("select");
+                }
+            })
+            r=data.value;
+        })
+        form.on('select(ddly)',function (data) {
+            ly=data.value;
+        })
+        form.on('select(ddbs)',function (data) {
+            bs=data.value;
+        })
+
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
+
+        // 当前弹出层，防止ID被覆盖
+        var parentIndex = layer.index;
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            var time = new Date();
+            time.getFullYear(); //获取完整的年份(4位,1970-???)
+            time.getMonth(); //获取当前月份(0-11,0代表1月)
+            time.getDate(); //获取当前日(1-31)
+            time.getHours(); //获取当前小时数(0-23)
+            time.getMinutes(); //获取当前分钟数(0-59)
+            time.getSeconds(); //获取当前秒数(0-59)
+            time.getMilliseconds(); //获取当前毫秒数(0-999)
+            var mytime = time.getFullYear()+"-"+(time.getMonth()+1)+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
+            var product_order = new Object();
+            product_order.flag=bs;
+            // product_order.create_time=mytime;
+            product_order.create_userid=r;
+            product_order.order_source=ly;
+            product_order.product_id=cp;
+            product_order.product_count=$("input[name = product_count]").val();
+            product_order.end_date=$("input[name = end_date]").val();
+            product_order.id=$("input[name = id]").val();
+            product_order.order_status=10;
+            // product_order.factory_id=$("input[name = factory_id]").val();
+            // product_order.factory_yield=$("input[name = factory_yield]").val();
+            $.ajax({
+                url:'editProOrd.action',
+                type:'post',
+                data:product_order,  //向后端传输的数据
+                dataType:"json",
+                success:function (msg) {
+                    if(msg==200){
+                        layer.closeAll('loading');
+                        layer.load(2);
+                        layer.msg("修改成功", {icon: 6});
+                        setTimeout(function(){
+                            layer.closeAll();//关闭所有的弹出层
+                            table.reload('currentTableId',{ //表格的id
+                                page: {                     //设置从第一页开始
+                                    curr: 1
+                                }
+                            });
+                        }, 1000);
+                    }else{
+                        layer.msg("修改失败", {icon: 5});
+                    }
+                }
+            })
+
+            return false;
+        });
+
+    });
+</script>

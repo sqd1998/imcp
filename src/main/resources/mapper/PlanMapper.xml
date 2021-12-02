@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wh.dao.PlanMapper">
+    <insert id="addPlan" parameterType="product_plan">
+        insert into t_product_plan
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="flag!=null and flag!=''">
+                flag,
+            </if>
+            <if test="create_userid!=null and create_userid!=''">
+                create_userid,
+            </if>
+            <if test="update_userid!=null and update_userid!=''">
+                update_userid,
+            </if>
+            <if test="plan_seq!=null and plan_seq!=''">
+                plan_seq,
+            </if>
+            <if test="order_id!=null and order_id!=''">
+                order_id,
+            </if>
+            <if test="product_id!=null and product_id!=''">
+                product_id,
+            </if>
+            <if test="plan_count!=null and plan_count!=''">
+                plan_count,
+            </if>
+            <if test="delivery_date!=null and delivery_date!=''">
+                delivery_date,
+            </if>
+            <if test="plan_start_date!=null and plan_start_date!=''">
+                plan_start_date,
+            </if>
+            <if test="plan_end_date!=null and plan_end_date!=''">
+                plan_end_date,
+            </if>
+            <if test="plan_status!=null and plan_status!=''">
+                plan_status,
+            </if>
+            <if test="factory_id!=null and factory_id!=''">
+                factory_id,
+            </if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="flag!=null and flag!=''">
+                #{flag},
+            </if>
+            <if test="create_userid!=null and create_userid!=''">
+                #{create_userid},
+            </if>
+            <if test="update_userid!=null and update_userid!=''">
+                #{update_userid},
+            </if>
+            <if test="plan_seq!=null and plan_seq!=''">
+                #{plan_seq},
+            </if>
+            <if test="order_id!=null and order_id!=''">
+                #{order_id},
+            </if>
+            <if test="product_id!=null and product_id!=''">
+                #{product_id},
+            </if>
+            <if test="plan_count!=null and plan_count!=''">
+                #{plan_count},
+            </if>
+            <if test="delivery_date!=null and delivery_date!=''">
+                #{delivery_date},
+            </if>
+            <if test="plan_start_date!=null and plan_start_date!=''">
+                #{plan_start_date},
+            </if>
+            <if test="plan_end_date!=null and plan_end_date!=''">
+                #{plan_end_date},
+            </if>
+            <if test="plan_status!=null and plan_status!=''">
+                #{plan_status},
+            </if>
+            <if test="factory_id!=null and factory_id!=''">
+                #{factory_id},
+            </if>
+        </trim>
+    </insert>
+    <update id="editPlan" parameterType="product_plan">
+        update t_product_plan set
+        <trim suffixOverrides=",">
+            <if test="flag!=null and flag!=''">
+                flag=#{flag},
+            </if>
+            <if test="create_userid!=null and create_userid!=''">
+                create_userid=#{create_userid},
+            </if>
+            <if test="update_userid!=null and update_userid!=''">
+                update_userid=#{update_userid},
+            </if>
+            <if test="plan_seq!=null and plan_seq!=''">
+                plan_seq=#{plan_seq},
+            </if>
+            <if test="order_id!=null and order_id!=''">
+                order_id=#{order_id},
+            </if>
+            <if test="product_id!=null and product_id!=''">
+                product_id=#{product_id},
+            </if>
+            <if test="plan_count!=null and plan_count!=''">
+                plan_count=#{plan_count},
+            </if>
+            <if test="delivery_date!=null and delivery_date!=''">
+                delivery_date=#{delivery_date},
+            </if>
+            <if test="plan_start_date!=null and plan_start_date!=''">
+                plan_start_date=#{plan_start_date},
+            </if>
+            <if test="plan_end_date!=null and plan_end_date!=''">
+                delivery_date=#{plan_end_date},
+            </if>
+            <if test="plan_status!=null and plan_status!=''">
+                plan_status=#{plan_status},
+            </if>
+            <if test="factory_id!=null and factory_id!=''">
+                factory_id=#{factory_id},
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+    <delete id="delPlan">
+        delete from t_product_plan where id=#{id }
+    </delete>
+    <select id="selAllPlan" resultType="product_plan">
+        select * from t_product_plan
+    </select>
+    <select id="selPlanBySeq" parameterType="product_plan" resultType="product_plan">
+        select * from t_product_plan where plan_seq like '%${plan_seq }%'
+    </select>
+
+</mapper>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wh.dao.ProductMapper">
+
+    <select id="selAllPro" resultType="product">
+        select * from t_product
+    </select>
+
+    <insert id="addPro" parameterType="product">
+        insert into t_product
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+        <if test="id!=null and id!=''">
+            id,
+        </if>
+        <if test="flag!=null and flag!=''">
+            flag,
+        </if>
+        <if test="create_time!=null and create_time!=''">
+            create_time,
+        </if>
+        <if test="create_userid!=null and create_userid!=''">
+            create_userid,
+        </if>
+        <if test="update_userid!=null and update_userid!=''">
+            update_userid,
+        </if>
+        <if test="product_num!=null and product_num!=''">
+            product_num,
+        </if>
+        <if test="product_name!=null and product_name!=''">
+            product_name,
+        </if>
+        <if test="product_img_url!=null and product_img_url!=''">
+            product_img_url,
+        </if>
+        <if test="factory_id!=null and factory_id!=''">
+            factory_id,
+        </if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id!=null and id!=''">
+                #{id},
+            </if>
+            <if test="flag!=null and flag!=''">
+                #{flag},
+            </if>
+            <if test="create_time!=null and create_time!=''">
+                #{create_time},
+            </if>
+            <if test="create_userid!=null and create_userid!=''">
+                #{create_userid},
+            </if>
+            <if test="update_userid!=null and update_userid!=''">
+                #{update_userid},
+            </if>
+            <if test="product_num!=null and product_num!=''">
+                #{product_num},
+            </if>
+            <if test="product_name!=null and product_name!=''">
+                #{product_name},
+            </if>
+            <if test="product_img_url!=null and product_img_url!=''">
+                #{product_img_url},
+            </if>
+            <if test="factory_id!=null and factory_id!=''">
+                #{factory_id},
+            </if>
+        </trim>
+    </insert>
+    <update id="editPro">
+        update t_product set
+        <trim suffixOverrides=",">
+            <if test="product_name!=null and product_name!=''">
+                product_name=#{product_name },
+            </if>
+            <if test="flag!=null and flag!=''">
+                flag=#{flag },
+            </if>
+            <if test="product_num!=null and product_num!=''">
+                product_num=#{product_num },
+            </if>
+            <if test="product_img_url!=null and product_img_url!=''">
+                product_img_url=#{product_img_url },
+            </if>
+            <if test="factory_id!=null and factory_id!=''">
+                factory_id=#{factory_id },
+            </if>
+        </trim>
+        where id = #{id }
+    </update>
+    <delete id="delPro" parameterType="product">
+        delete from t_product where id=#{id }
+    </delete>
+    <select id="selProByName" parameterType="String" resultType="product">
+        select * from t_product where product_name like '%${proName }%'
+    </select>
+
+</mapper>

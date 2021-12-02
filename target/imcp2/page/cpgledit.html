@@ -1,0 +1,130 @@
+<div class="layuimini-main">
+
+    <div class="layui-form layuimini-form">
+        <form class="layui-form" id="addPro" action="addPro.action" method="post">
+        <div class="layui-form-item ">
+            <label class="layui-form-label required">ID标识</label>
+            <div class="layui-input-block">
+<!--                lay-verify="required" lay-reqtext="ID标识不能为空"  -->
+                <input type="text"  name="id"  class="layui-input" placeholder="请输入ID标识">
+                <tip>填写ID标识</tip>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label required">有效标识</label>
+            <div class="layui-input-block">
+<!--                lay-verify="required" lay-reqtext="有效标识不能为空"-->
+<!--                <input type="number"  name="flag"  placeholder="请输入有效标识" value="" class="layui-input">-->
+                <select id="cpbs" name="cpbs" lay-filter="cpbs" lay-verify="required">
+                    <option value="1" selected>有效</option>
+                    <option value="2">无效</option>
+                </select>
+            </div>
+        </div>
+<!--        <div class="layui-form-item">-->
+<!--            <label class="layui-form-label">创建人ID</label>-->
+<!--            <div class="layui-input-block">-->
+<!--                <input type="text" name="create_userid" placeholder="请输入创建人ID" value="" class="layui-input">-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="layui-form-item layui-form-text">-->
+<!--            <label class="layui-form-label">修改人ID</label>-->
+<!--            <div class="layui-input-block">-->
+<!--                <input type="text" name="update_userid" placeholder="请输入修改人ID" value="" class="layui-input">-->
+<!--            </div>-->
+<!--        </div>-->
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">产品编号</label>
+            <div class="layui-input-block">
+                <input type="text" name="product_num" placeholder="请输入产品编号" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">产品名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="product_name" placeholder="请输入产品名称"  class="layui-input">
+            </div>
+        </div>
+<!--        <div class="layui-form-item layui-form-text">-->
+<!--            <label class="layui-form-label">产品图片所在目录</label>-->
+<!--            <div class="layui-input-block">-->
+<!--                <input type="text" name="product_img_url" placeholder="请输入产品图片所在目录" value="" class="layui-input">-->
+<!--            </div>-->
+<!--        </div>-->
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">工厂ID</label>
+            <div class="layui-input-block">
+                <input type="text" name="factory_id" placeholder="请输入工厂ID" value="" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="saveBtn" style="margin-left: 400px">确认保存</button>
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+<script>
+    layui.use(['form', 'table'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            table = layui.table,
+            $ = layui.$,
+            bs;
+
+        form.on('select(cpbs)',function (data) {
+            bs=data.value;
+        })
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
+
+        // 当前弹出层，防止ID被覆盖
+        var parentIndex = layer.index;
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            var product = new Object();
+            product.id=$("input[name = id]").val();
+            product.flag=bs;
+            // // product.create_time=$("input[name = create_time]").val();
+            // product.create_userid=$("input[name = create_userid]").val();
+            // // product.update_time=$("input[name = update_time]").val();
+            // product.update_userid=$("input[name = update_userid]").val();
+            product.product_num=$("input[name = product_num]").val();
+            product.product_name=$("input[name = product_name]").val();
+            product.product_img_url=$("input[name = product_img_url]").val();
+            product.factory_id=$("input[name = factory_id]").val();
+            $.ajax({
+                url:'editPro.action',
+                type:'post',
+                data:product,  //向后端传输的数据
+                dataType:"json",
+                success:function (msg) {
+                    if(msg!=null){
+                        layer.closeAll('loading');
+                        layer.load(2);
+                        layer.msg("修改成功", {icon: 6});
+                        setTimeout(function(){
+                            layer.closeAll();//关闭所有的弹出层
+                            table.reload('currentTableId',{ //表格的id
+                                page: {                     //设置从第一页开始
+                                    curr: 1
+                                }
+                            });
+                        }, 1000);
+                    }else{
+                        layer.msg("修改失败", {icon: 5});
+                    }
+                }
+            })
+
+            return false;
+        });
+
+    });
+</script>

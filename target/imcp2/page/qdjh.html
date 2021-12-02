@@ -1,0 +1,200 @@
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" >
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">产品名称</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="proName" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+            </div>
+        </script>
+
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+        <script type="text/html" id="currentTableBar">
+            <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="qidong">启动</a>
+<!--            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>-->
+        </script>
+
+    </div>
+</div>
+
+<script>
+    layui.use(['form', 'table','miniPage','element'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            miniPage = layui.miniPage;
+
+        table.render({
+            elem: '#currentTableId',
+            url: 'selAllPlan.action',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            cols: [[
+                {type: "checkbox", width: 50},
+                {field: 'id', width: 100, title: 'ID标识', sort: true},
+                {field: 'flag', width: 100, title: '有效标识',templet: function(d){if(d.flag == 1){return '有效'}else { if(d.flag ==2){return '无效'}}}},
+                // {field: 'create_time', width: 100, title: '创建时间', sort: true},
+                // {field: 'create_userid', width: 100, title: '创建人ID'},
+                // {field: 'update_time', title: '修改时间', minWidth: 80},
+                // {field: 'update_userid', width: 100, title: '修改人ID', sort: true},
+                {field: 'plan_seq', width: 100, title: '计划编号', sort: true},
+                {field: 'order_id', width: 100, title: '订单ID'},
+                {field: 'product_id', width: 100, title: '产品ID', sort: true},
+                {field: 'plan_count', width: 100, title: '计划数量', sort: true},
+                {field: 'delivery_date', width: 100, title: '交货日期', sort: true},
+                // {field: 'plan_start_date', width: 100, title: '计划开始日期', sort: true},
+                {field: 'plan_end_date', width: 100, title: '计划结束日期', sort: true},
+                {field: 'plan_status', width: 100, title: '计划状态', sort: true,templet: function(d){if(d.plan_status == 10){return '未启动'}else { if(d.plan_status ==20){return '已启动'}else{if(d.plan_status==30) {
+                        return '已完成'
+                    }}}}},
+                // {field: 'factory_id', title: '工厂ID', minWidth: 100},
+                {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center"}
+            ]],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 15,
+            page: true,
+            skin: 'line'
+        });
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            alert($("input[name = proName]").val());
+            $.ajax({
+                url:'selProByName.action',
+                type:'post',
+                dataType:'text',
+                data:$("input[name = proName]").val(),//向服务端发送搜索产品的名称
+            });
+
+            //执行搜索重载
+            table.reload('currentTableId', {
+                page: {
+                    curr: 1
+                }
+                // , where: {
+                //     searchParams: result
+                // }
+            }, 'data');
+
+            return false;
+        });
+
+        /**
+         * toolbar事件监听
+         */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'add') {   // 监听添加操作
+                var content = miniPage.getHrefContent('page/cpgladd.html');
+                var openWH = miniPage.getOpenWidthHeight();
+
+                var index = layer.open({
+                    title: '添加用户',
+                    type: 1,
+                    shade: 0.2,
+                    maxmin:true,
+                    shadeClose: true,
+                    area: [openWH[0] + 'px', openWH[1] + 'px'],
+                    offset: [openWH[2] + 'px', openWH[3] + 'px'],
+                    content: content,
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+            } else if (obj.event === 'delete') {  // 监听删除操作
+                var checkStatus = table.checkStatus('currentTableId')
+                    , data = checkStatus.data;
+                layer.alert(JSON.stringify(data));
+            }
+        });
+
+        //监听表格复选框选择
+        table.on('checkbox(currentTableFilter)', function (obj) {
+            console.log(obj)
+        });
+
+        table.on('tool(currentTableFilter)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'qidong') {
+                if(data.plan_status==10){
+                    var time = new Date();
+                    time.getFullYear(); //获取完整的年份(4位,1970-???)
+                    time.getMonth(); //获取当前月份(0-11,0代表1月)
+                    time.getDate(); //获取当前日(1-31)
+                    time.toLocaleDateString(); //获取当前日期
+                    var mytime = time.getFullYear()+"-"+(time.getMonth()+1)+"-"+time.getDate();
+                    $.ajax({
+                        url:'editPlan.action',
+                        type:'post',
+                        data:{'id':data.id,'plan_status':20,'plan_start_date':mytime},
+                    })
+                    $.ajax({
+                        url:'editProOrd.action',
+                        type:'post',
+                        data: {'id':data.order_id,'order_status':40},
+                        dataType: 'json',
+                        success:function () {
+                            layer.msg("启动成功", {icon: 6});
+                            table.reload('currentTableId',{ //表格的id
+                                page: {                     //设置从第一页开始
+                                    curr: 1
+                                }
+                            });
+                        },
+                    })
+
+                }else if(data.plan_status==20) {
+                    layer.msg("不能重复启动",{icon:5});
+                }else if(data.plan_status==30){
+                    layer.msg("计划已完成，不能启动",{icon:5});
+                }
+
+                return false;
+            } else if (obj.event === 'delete') {
+                layer.confirm('真的删除行么', function (index) {
+                    // location.href='delPro.action?id='+data.id;
+                    $.ajax({
+                        url:'delPlan.action',
+                        type:'get',
+                        data:{'id':data.id},//向服务端发送删除的id
+                        success:function(suc){
+                            if(suc==200){
+                                obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                                layer.close(index);
+                                console.log(index);
+                                layer.msg("删除成功",{icon:1});
+                            }
+                            else{
+                                layer.msg("删除失败",{icon:5});
+                            }
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
+        });
+
+    });
+</script>

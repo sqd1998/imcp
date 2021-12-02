@@ -1,0 +1,161 @@
+<div class="layuimini-main">
+
+    <div class="layui-form layuimini-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label required">设备</label>
+            <div class="layui-input-block">
+<!--                <input type="text" name="equipment_id" lay-verify="required" lay-reqtext="设备ID不能为空" placeholder="请输入设备ID" value="" class="layui-input">-->
+                <select id="sbxl" name="sbxl" lay-filter="sbxl" lay-verify="sbxl">
+                    <option value="">请选择</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">产品</label>
+            <div class="layui-input-block" >
+<!--                <input type="text" name="product_id" placeholder="请输入产品ID" value="" class="layui-input">-->
+                <select id="cpxl" name="cpxl" lay-filter="cpxl" lay-verify="cpxl">
+                    <option value="">请选择</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">产能</label>
+            <div class="layui-input-block">
+                <input type="text" name="yield" placeholder="请输入产能" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">产能单位</label>
+            <div class="layui-input-block">
+<!--                <input type="text" name="unit" placeholder="请输入产能单位" value="" class="layui-input">-->
+                <select id="cndw" name="cndw" lay-filter="cndw" lay-verify="required">
+                    <option value="10" selected>天</option>
+                    <option value="20">月</option>
+                    <option value="30">年</option>
+                    <option value="40">小时</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">工厂ID</label>
+            <div class="layui-input-block">
+<!--                <input type="text" name="factory_id" placeholder="请输入工厂ID" value="" class="layui-input">-->
+                <select id="gcxl" name="gcxl" lay-filter="gcxl" lay-verify="gcxl">
+                    <option value="">请选择</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn" style="margin-left: 400px">确认保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(['form', 'table'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            table = layui.table,
+            $ = layui.$,
+            sbz,
+            cpz,
+            cndw,
+            gcm;
+        //动态加载设备下拉列表
+        form.on('select(sbxl)',function (data) {
+            $.ajax({
+                url: 'selAllEqu.action',
+                dataType: 'json',
+                type: 'post',
+                success: function (data) {
+                    $.each(data.data, function (index, item) {
+                        $('#sbxl').append(new Option(item.equipment_name, item.id));// 下拉菜单里添加元素
+                    });
+                    form.render("select");
+                }
+            })
+            sbz=data.value;
+        })
+        //产能单位下拉
+        form.on('select(cndw)',function (data) {
+            cndw=data.value;
+        })
+        //动态加载产品下拉列表
+        form.on('select(cpxl)',function (data) {
+            $.ajax({
+                url: 'selAllPro.action',
+                dataType: 'json',
+                type: 'post',
+                success: function (data) {
+                    $.each(data.data, function (index, item) {
+                        $('#cpxl').append(new Option(item.product_name, item.id));// 下拉菜单里添加元素
+                    });
+                    form.render("select");
+                }
+            })
+            cpz=data.value;
+        })
+        //动态加载工厂下拉列表
+        form.on('select(gcxl)',function (data) {
+            $.ajax({
+                url: 'selFac.action',
+                dataType: 'json',
+                type: 'post',
+                success: function (data) {
+                    $.each(data.data, function (index, item) {
+                        $('#gcxl').append(new Option(item.factory_name, item.id));// 下拉菜单里添加元素
+                    });
+                    layui.form.render("select");
+                }
+            })
+            gcm=data.value;
+        })
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
+
+        // 当前弹出层，防止ID被覆盖
+        var parentIndex = layer.index;
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            var equipment_product = new Object();
+            equipment_product.equipment_id=sbz;
+            equipment_product.product_id=cpz;
+            equipment_product.yield=$("input[name = yield]").val();
+            equipment_product.unit=cndw;
+            equipment_product.factory_id=gcm;
+            $.ajax({
+                url:'addEP.action',
+                type:'post',
+                data:equipment_product,  //向后端传输的数据
+                dataType:"json",
+                success:function (msg) {
+                    if(msg!=null){
+                        layer.closeAll('loading');
+                        layer.load(2);
+                        layer.msg("添加成功", {icon: 6});
+                        setTimeout(function(){
+                            layer.closeAll();//关闭所有的弹出层
+                            table.reload('currentTableId',{ //表格的id
+                                page: {                     //设置从第一页开始
+                                    curr: 1
+                                }
+                            });
+                        }, 1000);
+                    }else{
+                        layer.msg("添加失败", {icon: 5});
+                    }
+                }
+            })
+
+
+            return false;
+        });
+
+    });
+</script>

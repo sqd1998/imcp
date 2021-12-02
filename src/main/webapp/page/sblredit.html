@@ -1,0 +1,139 @@
+<div class="layuimini-main">
+
+    <div class="layui-form layuimini-form">
+        <form class="layui-form" id="addPro" action="addPro.action" method="post">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label required">有效标识</label>
+            <div class="layui-input-block">
+<!--                lay-verify="required" lay-reqtext="有效标识不能为空"-->
+<!--                <input type="number"  name="flag"  placeholder="请输入有效标识" value="" class="layui-input">-->
+                <select id="bs" name="bs" lay-filter="bs" lay-verify="required">
+                    <option value="1" selected>有效</option>
+                    <option value="2">无效</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">设备序号</label>
+            <div class="layui-input-block">
+                <input type="hidden" id="id" name="id"  placeholder="请输入ID标识" class="layui-input">
+                <input type="text" name="equipment_seq" placeholder="请输入产品编号" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">设备名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="equipment_name" placeholder="请输入产品名称"  class="layui-input">
+            </div>
+        </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">设备状态</label>
+                <div class="layui-input-block">
+                    <select id="sbzt" name="sbzt" lay-filter="sbzt" lay-verify="required">
+                        <option value="10" selected>启用</option>
+                        <option value="20">停用</option>
+                        <option value="30">故障</option>
+                    </select>
+                </div>
+            </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">工厂ID</label>
+            <div class="layui-input-block">
+<!--                <input type="text" name="factory_id" placeholder="请输入工厂ID" value="" class="layui-input">-->
+                <select id="gcxl" name="gcxl" lay-filter="gcxl" lay-verify="gcxl">
+                    <option value="">请选择</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="saveBtn" style="margin-left: 400px">确认保存</button>
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+<script>
+    layui.use(['form', 'table'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            table = layui.table,
+            $ = layui.$,
+            bs,
+            zt,
+            gcm;
+        form.on('select(bs)',function (data) {
+            bs = data.value;
+        })
+        form.on('select(sbzt)',function (data) {
+            zt = data.value;
+        })
+        //动态加载工厂下拉列表
+        form.on('select(gcxl)',function (data) {
+            $.ajax({
+                url: 'selFac.action',
+                dataType: 'json',
+                type: 'post',
+                success: function (data) {
+                    $.each(data.data, function (index, item) {
+                        $('#gcxl').append(new Option(item.factory_name, item.id));// 下拉菜单里添加元素
+                    });
+                    layui.form.render("select");
+                }
+            })
+            gcm=data.value;
+        })
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
+
+        // 当前弹出层，防止ID被覆盖
+        var parentIndex = layer.index;
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            var time = new Date();
+            var mytime = time.getFullYear()+"-"+(time.getMonth()+1)+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
+            var equipment = new Object();
+            equipment.id=$("input[name = id]").val();
+            equipment.flag=bs;
+            equipment.create_time=mytime;
+            // equipment.create_userid=$("input[name = create_userid]").val();
+            // equipment.update_userid=$("input[name = update_userid]").val();
+            equipment.equipment_seq=$("input[name = equipment_seq]").val();
+            equipment.equipment_name=$("input[name = equipment_name]").val();
+            // equipment.equipment_img_url=$("input[name = equipment_img_url]").val();
+            equipment.equipment_status=zt;
+            equipment.factory_id=gcm;
+            $.ajax({
+                url:'editEqu.action',
+                type:'post',
+                data:equipment,  //向后端传输的数据
+                dataType:"json",
+                success:function (msg) {
+                    if(msg!=null){
+                        layer.closeAll('loading');
+                        layer.load(2);
+                        layer.msg("修改成功", {icon: 6});
+                        setTimeout(function(){
+                            layer.closeAll();//关闭所有的弹出层
+                            table.reload('currentTableId',{ //表格的id
+                                page: {                     //设置从第一页开始
+                                    curr: 1
+                                }
+                            });
+                        }, 1000);
+                    }else{
+                        layer.msg("修改失败", {icon: 5});
+                    }
+                }
+            })
+
+            return false;
+        });
+
+    });
+</script>

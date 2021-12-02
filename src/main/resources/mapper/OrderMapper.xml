@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wh.dao.OrderMapper">
+    <insert id="addProOrd" parameterType="product_order">
+        insert into t_product_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="flag!=null and flag!=''">
+                flag,
+            </if>
+            <if test="create_time!=null and create_time!=''">
+                create_time,
+            </if>
+            <if test="create_userid!=null and create_userid!=''">
+                create_userid,
+            </if>
+            <if test="order_seq!=null and order_seq!=''">
+                order_seq,
+            </if>
+            <if test="order_source!=null and order_source!=''">
+                order_source,
+            </if>
+            <if test="product_id!=null and product_id!=''">
+                product_id,
+            </if>
+            <if test="product_count!=null and product_count!=''">
+                product_count,
+            </if>
+            <if test="end_date!=null and end_date!=''">
+                end_date,
+            </if>
+            <if test="order_status!=null and order_status!=''">
+                order_status,
+            </if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="flag!=null and flag!=''">
+                #{flag},
+            </if>
+            <if test="create_time!=null and create_time!=''">
+                #{create_time},
+            </if>
+            <if test="create_userid!=null and create_userid!=''">
+                #{create_userid},
+            </if>
+            <if test="order_seq!=null and order_seq!=''">
+                #{order_seq},
+            </if>
+            <if test="order_source!=null and order_source!=''">
+                #{order_source},
+            </if>
+            <if test="product_id!=null and product_id!=''">
+                #{product_id},
+            </if>
+            <if test="product_count!=null and product_count!=''">
+                #{product_count},
+            </if>
+            <if test="end_date!=null and end_date!=''">
+                #{end_date},
+            </if>
+            <if test="order_status!=null and order_status!=''">
+                #{order_status},
+            </if>
+        </trim>
+    </insert>
+    <update id="editProOrd" parameterType="product_order">
+        update t_product_order set
+        <trim suffixOverrides=",">
+            <if test="flag!=null and flag!=''">
+                flag=#{flag},
+            </if>
+            <if test="create_userid!=null and create_userid!=''">
+                create_userid=#{create_userid},
+            </if>
+            <if test="update_userid!=null and update_userid!=''">
+                update_userid=#{update_userid},
+            </if>
+            <if test="order_seq!=null and order_seq!=''">
+                order_seq=#{order_seq},
+            </if>
+            <if test="order_source!=null and order_source!=''">
+                order_source=#{order_source},
+            </if>
+            <if test="product_id!=null and product_id!=''">
+                product_id=#{product_id},
+            </if>
+            <if test="product_count!=null and product_count!=''">
+                product_count=#{product_count},
+            </if>
+            <if test="end_date!=null and end_date!=''">
+                end_date=#{end_date},
+            </if>
+            <if test="order_status!=null and order_status!=''">
+                order_status=#{order_status},
+            </if>
+        </trim>
+        where id = #{id }
+    </update>
+    <delete id="delProOrd" parameterType="product_order">
+        delete from t_product_order where id=#{id}
+    </delete>
+    <select id="selAllProOrd" resultType="product_order">
+        select * from t_product_order
+    </select>
+    <select id="selProOrdByNum" parameterType="product_order" resultType="product_order">
+        select * from t_product_order where order_seq like '%${order_seq }%'
+    </select>
+
+</mapper>

@@ -1,0 +1,164 @@
+<div class="layuimini-main">
+
+    <div class="layui-form layuimini-form">
+        <form class="layui-form" id="addPro" action="addPro.action" method="post">
+        <div class="layui-form-item">
+            <label class="layui-form-label required">有效标识</label>
+            <div class="layui-input-block">
+<!--                lay-verify="required" lay-reqtext="有效标识不能为空"-->
+<!--                <input type="number"  name="flag"  placeholder="请输入有效标识" value="" class="layui-input">-->
+                <select id="jhbs" name="jhbs" lay-filter="jhbs" lay-verify="required">
+                    <option value="1" selected>有效</option>
+                    <option value="2">无效</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">创建人ID</label>
+            <div class="layui-input-block">
+                <input type="hidden" id="id" name="id" value="">
+                <input type="text" name="create_userid" placeholder="请输入创建人ID" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">修改人ID</label>
+            <div class="layui-input-block">
+                <input type="text" name="update_userid" placeholder="请输入修改人ID" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">计划编号</label>
+            <div class="layui-input-block">
+                <input type="text" name="plan_seq" placeholder="请输入计划编号" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">订单ID</label>
+            <div class="layui-input-block">
+                <input type="text" name="order_id" placeholder="请输入订单ID"  class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">产品</label>
+            <div class="layui-input-block">
+<!--                <input type="text" name="product_img_url" placeholder="请输入产品" value="" class="layui-input">-->
+                <select id="jhcp" name="jhcp" lay-filter="jhcp" lay-verify="required">
+                    <option value="">请选择</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">计划数量</label>
+            <div class="layui-input-block">
+                <input type="text" name="plan_count" placeholder="请输入计划数量" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">交货日期</label>
+            <div class="layui-input-block">
+                <input type="text" name="delivery_date" placeholder="请输入交货日期" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">计划开始日期</label>
+            <div class="layui-input-block">
+                <input type="text" name="plan_start_date" placeholder="请输入计划开始日期" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">计划结束日期</label>
+            <div class="layui-input-block">
+                <input type="text" name="plan_end_date" placeholder="请输入计划结束日期" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">工厂ID</label>
+            <div class="layui-input-block">
+                <input type="text" name="factory_id" placeholder="请输入工厂ID" value="" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="saveBtn" style="margin-left: 400px">确认保存</button>
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+<script>
+    layui.use(['form', 'table'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            table = layui.table,
+            $ = layui.$,
+            jhcp;
+        //动态加载产品下拉列表
+        form.on('select(jhcp)',function (data) {
+            $.ajax({
+                url: 'selAllPro.action',
+                dataType: 'json',
+                type: 'post',
+                success: function (data) {
+                    $.each(data.data, function (index, item) {
+                        $('#jhcp').append(new Option(item.product_name, item.id));// 下拉菜单里添加元素
+                    });
+                    form.render("select");
+                }
+            })
+            jhcp=data.value;
+        })
+
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
+
+        // 当前弹出层，防止ID被覆盖
+        var parentIndex = layer.index;
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            var product_order = new Object();
+            product_order.id=$("input[name = id]").val();
+            product_order.flag=$("input[name = flag]").val();
+            // product_order.create_time=$("input[name = create_time]").val();
+            product_order.create_userid=$("input[name = create_userid]").val();
+            // // product_order.update_time=$("input[name = update_time]").val();
+            product_order.update_userid=$("input[name = update_userid]").val();
+            product_order.plan_seq=$("input[name = plan_seq]").val();
+            product_order.order_id=$("input[name = order_id]").val();
+            product_order.plan_count=$("input[name = plan_count]").val();
+            // product_order.delivery_date=$("input[name = delivery_date]").val();
+            // product_order.plan_start_date=$("input[name = plan_start_date]").val();
+            // product_order.plan_end_date=$("input[name = plan_end_date]").val();
+            product_order.factory_id=$("input[name = factory_id]").val();
+            $.ajax({
+                url:'editPlan.action',
+                type:'post',
+                data:product_order,  //向后端传输的数据
+                dataType:"json",
+                success:function (msg) {
+                    if(msg!=null){
+                        layer.closeAll('loading');
+                        layer.load(2);
+                        layer.msg("修改成功", {icon: 6});
+                        setTimeout(function(){
+                            layer.closeAll();//关闭所有的弹出层
+                            table.reload('currentTableId',{ //表格的id
+                                page: {                     //设置从第一页开始
+                                    curr: 1
+                                }
+                            });
+                        }, 1000);
+                    }else{
+                        layer.msg("修改失败", {icon: 5});
+                    }
+                }
+            })
+
+            return false;
+        });
+
+    });
+</script>

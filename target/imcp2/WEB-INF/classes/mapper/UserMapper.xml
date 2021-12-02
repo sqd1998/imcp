@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wh.dao.UserMapper">
+	<select id="selUser" resultType="user">
+		select * from t_user
+	</select>
+	<select id="selFac" resultType="factory">
+		select * from t_factory
+	</select>
+<!--	用户注册  -->
+	<insert id="register">
+		insert into t_user
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="user.user_name!=null and user.user_name!=''">
+				user_name,
+			</if>
+			<if test="user.user_passwd!=null and user.user_passwd!=''">
+				user_passwd,
+			</if>
+			<if test="user.user_phone_num!=null and user.user_phone_num!=''">
+				user_phone_num,
+			</if>
+			<if test="user.user_email!=null and user.user_email!=''">
+				user_email,
+			</if>
+		</trim>
+		values
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="user.user_name!=null and user.user_name!=''">
+				#{user.user_name },
+			</if>
+			<if test="user.user_passwd!=null and user.user_passwd!=''">
+				#{user.user_passwd },
+			</if>
+			<if test="user.user_phone_num!=null and user.user_phone_num!=''">
+				#{user.user_phone_num },
+			</if>
+			<if test="user.user_email!=null and user.user_email!=''">
+				#{user.user_email },
+			</if>
+		</trim>;
+		insert into t_factory
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="factory.factory_name!=null and factory.factory_name!=''">
+				factory_name,
+			</if>
+		</trim>
+		 values
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="factory.factory_name!=null and factory.factory_name!=''">
+				#{factory.factory_name },
+			</if>
+		</trim>
+	</insert>
+
+	<select id="login" parameterType="String" resultType="user">
+		select *
+		from t_user
+		where user_name=#{loginName }
+		and user_passwd=#{password }
+	</select>
+	
+</mapper>
