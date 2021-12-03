@@ -14,3 +14,8 @@
 2硬件环境
 内存：8G
 硬盘：1T
+
+##项目截图
+![图片1](https://user-images.githubusercontent.com/63839504/144557469-87765f83-ac50-4d4c-ade0-cd7b25482ead.png)
+
+![图片2](https://user-images.githubusercontent.com/63839504/144557628-46c882e6-0122-4dcb-b310-ccbdf6be9b07.png)
