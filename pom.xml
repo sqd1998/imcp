@@ -83,11 +83,7 @@
       <version>${spring.version}</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.springframework/spring-tx -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-tx</artifactId>
-      <version>${spring.version}</version>
-    </dependency>
+   
     <!--mybatis整合spring-->
     <!-- https://mvnrepository.com/artifact/org.mybatis/mybatis-spring -->
     <dependency>
@@ -214,6 +210,11 @@
       <version>2.2.3</version>
       <classifier>jdk15</classifier><!-- jdk版本 -->
     </dependency>
+    <dependency>
+  <groupId>org.springframework</groupId>
+  <artifactId>spring-core</artifactId>
+  <version>[4.3.20,)</version>
+</dependency>
 
   </dependencies>
 
